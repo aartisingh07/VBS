@@ -30,7 +30,7 @@ public class UserController {
         userRepo.save(user);
 
         History h1 = new History();
-        h1.setDescripton("User Self Created: "+user.getUsername());
+        h1.setDescription("User Self Created: "+user.getUsername());
         historyRepo.save(h1);
 
         return "Signup Successful";
@@ -76,12 +76,12 @@ public class UserController {
         if(obj.getKey().equalsIgnoreCase("name")){
             if(user.getName().equalsIgnoreCase(obj.getValue())) return "Cannot be same";
 
-            h1.setDescripton("User updated Name from: "+user.getName()+" to "+obj.getValue());
+            h1.setDescription("User updated Name from: "+user.getName()+" to "+obj.getValue());
 
             user.setName(obj.getValue());
         }
         else if(obj.getKey().equalsIgnoreCase("password")){
-            h1.setDescripton("User "+user.getUsername()+" updated Password!");
+            h1.setDescription("User "+user.getUsername()+" updated Password!");
 
             user.setPassword(obj.getValue());
         }
@@ -89,7 +89,7 @@ public class UserController {
             User user2 = userRepo.findByEmail(obj.getValue());
             if(user2 != null) return "Email already exists";
 
-            h1.setDescripton("User updated Email from: "+user.getEmail()+" to "+obj.getValue());
+            h1.setDescription("User updated Email from: "+user.getEmail()+" to "+obj.getValue());
 
             user.setEmail(obj.getValue());
         }
@@ -105,7 +105,7 @@ public class UserController {
     public String add(@RequestBody User user, @PathVariable int adminId){
 
         History h1 = new History();
-        h1.setDescripton("Admin: "+adminId+" Created User: "+user.getUsername());
+        h1.setDescription("Admin: "+adminId+" Created User: "+user.getUsername());
         historyRepo.save(h1);
 
         userRepo.save(user);
@@ -138,7 +138,7 @@ public class UserController {
         }
 
         History h1 = new History();
-        h1.setDescripton("Admin: "+adminId+" Deleted User: "+userId);
+        h1.setDescription("Admin: "+adminId+" Deleted User: "+userId);
         historyRepo.save(h1);
 
         userRepo.delete(user);

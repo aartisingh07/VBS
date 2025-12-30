@@ -17,7 +17,7 @@ public class History {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     @Column(nullable = false)
-    String descripton;
+    String description;
     @CreationTimestamp
     @Column(nullable = false,updatable = false)
     LocalDateTime date;
