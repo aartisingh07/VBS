@@ -2,9 +2,12 @@ package com.vbs.demo.controller;
 
 import com.vbs.demo.dto.DisplayDto;
 import com.vbs.demo.dto.UpdateDto;
+import com.vbs.demo.models.Admin;
 import com.vbs.demo.models.History;
 import com.vbs.demo.models.User;
+import com.vbs.demo.repositories.AdminRepo;
 import com.vbs.demo.repositories.HistoryRepo;
+import com.vbs.demo.repositories.TransactionRepo;
 import com.vbs.demo.repositories.UserRepo;
 import com.vbs.demo.dto.LoginDto;
 
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,35 +29,71 @@ public class UserController {
     @Autowired
     private HistoryRepo historyRepo;
 
+    @Autowired
+    private AdminRepo adminRepo;;
+
+    @Autowired
+    private TransactionRepo transactionRepo;
+
     @PostMapping("/register")
     public String register(@RequestBody User user) {
-        userRepo.save(user);
+
+        if (adminRepo.existsByUsername(user.getUsername())) {
+            return "REGISTERED SUCCESSFULLY";
+        }
+
+        if (userRepo.existsByUsername(user.getUsername())) {
+            return "ALREADY REGISTERED";
+        }
+        Admin admin = new Admin();
+        if(user.getRole().equals("admin")){
+
+            admin.setUsername(user.getUsername());
+            admin.setName(user.getName());
+            admin.setEmail(user.getEmail());
+            admin.setPassword(user.getPassword());
+            admin.setRole("admin");
+
+            adminRepo.save(admin);
+        }
+        else{
+            userRepo.save(user);
+        }
 
         History h1 = new History();
         h1.setDescription("User Self Created: "+user.getUsername());
         historyRepo.save(h1);
 
         return "Signup Successful";
-    }User user = userRepo.findByUsername(u.getUsername());
+    }
+
 
     @PostMapping("/login")
     public String login(@RequestBody LoginDto u) {
+        User user = userRepo.findByUsername(u.getUsername());
+        Admin admin =  adminRepo.findByUsername(u.getUsername());
 
-
-
-        if (user == null) {
-            return "User Not Found";   // ✅ semicolon fixed
+        if(u.getRole().equals("admin")){
+            if(admin == null){
+                return "Admin Not Found";
+            }
+            if(!u.getPassword().equals(admin.getPassword())){
+                return "Password Incorrect";
+            }
+            return String.valueOf(admin.getId());
         }
-
-        if (!u.getPassword().equals(user.getPassword())) {
-            return "Password Incorrect";
+        else{
+            if (user == null) {
+                return "User Not Found";
+            }
+            if (!u.getPassword().equals(user.getPassword())) {
+                return "Password Incorrect";
+            }
+            if (!u.getRole().equals(user.getRole())) {
+                return "Role Incorrect";
+            }
+            return String.valueOf(user.getId());
         }
-
-        if (!u.getRole().equals(user.getRole())) {
-            return "Role Incorrect";
-        }
-
-        return String.valueOf(user.getId()); // ✅ success
     }
 
     @GetMapping("/get-details/{id}")
@@ -104,6 +144,11 @@ public class UserController {
     @PostMapping("/add/{adminId}")
     public String add(@RequestBody User user, @PathVariable int adminId){
 
+        if (userRepo.existsByUsername(user.getUsername())) {
+            return "Username already exists";
+        }
+        user.setRole("customer");
+
         History h1 = new History();
         h1.setDescription("Admin: "+adminId+" Created User: "+user.getUsername());
         historyRepo.save(h1);
@@ -143,5 +188,35 @@ public class UserController {
 
         userRepo.delete(user);
         return "User Deleted Successfully";
+    }
+
+    @GetMapping("/notifications/{userId}")
+    public String getNotifications(@PathVariable int userId) {
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Not found"));
+
+        long MIN_BALANCE = 500;
+        if (user.getBalance() < MIN_BALANCE) {
+            return "⚠️ Your balance is below minimum limit. Please maintain balance to avoid account freeze.";
+        }
+
+        if (user.getCreatedAt().isBefore(LocalDateTime.now().minusDays(30))) {
+            return "⚠️ Your account has been inactive for a long time. Please perform a transaction.";
+        }
+
+        return "No notifications";
+    }
+
+    @GetMapping("/notifications/unread-count/{userId}")
+    public int getNotificationCount(@PathVariable int userId) {
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Not found"));
+
+        int count = 0;
+        if (user.getBalance() < 500) count++;
+        if (user.getCreatedAt().isBefore(LocalDateTime.now().minusDays(30))) count++;
+        return count;
     }
 }

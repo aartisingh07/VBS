@@ -227,20 +227,33 @@
             body: JSON.stringify(signupData)
         })
         .then(response => response.text())
-        .then(result => {
-            if (result === "Successfully Registered") {
-                showMessage(
-                    "signupMessage",
-                    "Account created successfully! Please login.",
-                    "success"
-                );
+            .then(result => {
+                if (result === "REGISTERED SUCCESSFULLY") {
+                    showMessage(
+                        "signupMessage",
+                        "Account created successfully! Redirecting to login...",
+                        "success"
+                    );
 
-                window.location.href = "login.html";
-            } else {
-                showMessage("signupMessage", result, "error");
-            }
-        })
-        .catch(error => {
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 1200);
+
+                } else if (result === "ALREADY REGISTERED") {
+                    showMessage(
+                        "signupMessage",
+                        "You already have an account. Redirecting to login...",
+                        "success"
+                    );
+
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 1000);
+                } else {
+                    showMessage("signupMessage", result, "error");
+                }
+            })
+                .catch(error => {
             showMessage(
                 "signupMessage",
                 "Error connecting to server. Please try again.",

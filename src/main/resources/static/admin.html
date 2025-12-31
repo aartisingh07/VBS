@@ -690,6 +690,18 @@
                 gap: 5px;
             }
         }
+        .readonly-input {
+            background-color: #f5f5f5 !important;
+            color: #888 !important;
+            cursor: not-allowed;
+            border: 2px solid #ccc;
+        }
+
+        .readonly-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
     </style>
 </head>
 <body>
@@ -825,11 +837,11 @@
                 <input type="number" id="addBalance" name="balance" required placeholder="Enter initial balance" min="0" step="0.01">
             </div>
             <div class="form-group">
-                <label for="addRole">Role *</label>
-                <select id="addRole" name="role" required>
-                    <option value="">Select Role</option>
-                    <option value="customer">Customer</option>
-                    <option value="admin">Admin</option>
+                <label>Role *</label>
+<!--                    <option value="">Select Role</option>-->
+                <input type="text" value="Customer" readonly class="readonly-input">
+                <!--                    <option value="customer">Customer</option>-->
+<!--                    <option value="admin">Admin</option>-->
                 </select>
             </div>
             <div class="modal-buttons-full">
@@ -1144,11 +1156,11 @@
             email: document.getElementById('addEmail').value.trim(),
             password: document.getElementById('addPassword').value.trim(),
             balance: parseFloat(document.getElementById('addBalance').value),
-            role: document.getElementById('addRole').value
+            // role: document.getElementById('addRole').value
         };
 
 
-        if (!formData.name || !formData.username || !formData.email || !formData.password || isNaN(formData.balance) || !formData.role) {
+        if (!formData.name || !formData.username || !formData.email || !formData.password || isNaN(formData.balance)) {
             showMessage('adminMessage', 'Please fill all required fields', 'error');
             return;
         }

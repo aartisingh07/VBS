@@ -204,7 +204,7 @@
       const loginData = {
           username: document.getElementById('loginUsername').value,
           password: document.getElementById('loginPassword').value,
-          role: document.getElementById("signupRole").value
+          role: document.getElementById("loginRole").value
       };
 
       try {
@@ -231,7 +231,7 @@ setTimeout(() => {
 if (role === "admin") {
   window.location.href = `admin.html?id=${result}`;
 } else {
-  window.location.href = `customer.html?id=${result}`;
+  window.location.href = `dashboard.html?id=${result}`;
 }
 }, 800);
 
