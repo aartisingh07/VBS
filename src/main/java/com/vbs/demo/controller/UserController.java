@@ -34,12 +34,12 @@ public class UserController {
         historyRepo.save(h1);
 
         return "Signup Successful";
-    }
+    }User user = userRepo.findByUsername(u.getUsername());
 
     @PostMapping("/login")
     public String login(@RequestBody LoginDto u) {
 
-        User user = userRepo.findByUsername(u.getUsername());
+
 
         if (user == null) {
             return "User Not Found";   // ✅ semicolon fixed
