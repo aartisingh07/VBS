@@ -701,6 +701,35 @@
             outline: none;
             box-shadow: none;
         }
+        .welcome-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .welcome-box p{
+            font-size: 10px;
+        }
+
+        #welcomeUsername {
+            font-size: 14px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* ⬅ important */
+        }
+
+        .admin-header-left {
+            display: flex;
+            flex-direction: column; /* ⬅ stacks vertically */
+            gap: 10px;
+        }
+
+        .dashboard-title {
+            margin-top: 10px;
+        }
 
     </style>
 </head>
@@ -721,7 +750,15 @@
         <div id="adminMessage" class="message"></div>
 
         <div class="admin-header">
-            <h2>Admin Dashboard</h2>
+            <div class="admin-header-left">
+                <div class="welcome-box">
+                    <h2 id="welcomeText">Welcome,</h2>
+                    <p id="welcomeUsername"></p>
+                </div>
+                <br>
+                <h2 class="dashboard-title">Admin Dashboard</h2>
+            </div>
+
             <button class="btn-add-user" onclick="openAddUserModal()">
                 ➕ Add New User
             </button>
@@ -924,6 +961,49 @@
             console.error('Error loading users:', error);
             showMessage('adminMessage', 'Failed to load users. Make sure backend is running.', 'error');
             displayErrorState();
+        }
+    }
+
+    function loadAdminWelcome() {
+        // Try from localStorage first
+        const adminName = localStorage.getItem("name");
+        const adminUsername = localStorage.getItem("username");
+
+        const welcomeText = document.getElementById("welcomeText");
+        const welcomeUsername = document.getElementById("welcomeUsername");
+
+        if (adminName) {
+            welcomeText.textContent = `Welcome, ${adminName}`;
+        } else {
+            welcomeText.textContent = "Welcome, Admin";
+        }
+
+        if (adminUsername) {
+            welcomeUsername.textContent = `@${adminUsername}`;
+        } else {
+            welcomeUsername.textContent = "";
+        }
+    }
+
+    async function loadAdminWelcome() {
+        if (!userId) return;
+
+        try {
+            const response = await fetch(`${API_URL}/admin/${userId}`);
+            if (!response.ok) throw new Error("Failed to fetch admin");
+
+            const admin = await response.json();
+
+            document.getElementById("welcomeText").textContent =
+                `Welcome, ${admin.name}`;
+
+            document.getElementById("welcomeUsername").textContent =
+                `@${admin.username}`;
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById("welcomeText").textContent = "Welcome, Admin";
+            document.getElementById("welcomeUsername").textContent = "";
         }
     }
 
@@ -1250,6 +1330,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         getUserIdFromURL();
+        loadAdminWelcome();   // 👈 ADD THIS
         loadAllUsers();
     });
 

@@ -1,5 +1,6 @@
 package com.vbs.demo.controller;
 
+import com.vbs.demo.dto.AdminDisplayDto;
 import com.vbs.demo.dto.DisplayDto;
 import com.vbs.demo.dto.UpdateDto;
 import com.vbs.demo.models.Admin;
@@ -218,5 +219,22 @@ public class UserController {
         if (user.getBalance() < 500) count++;
         if (user.getCreatedAt().isBefore(LocalDateTime.now().minusDays(30))) count++;
         return count;
+    }
+
+    @GetMapping("/admin/{adminId}")
+    public AdminDisplayDto getAdminDetails(@PathVariable int adminId) {
+
+        Admin admin = adminRepo.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        AdminDisplayDto dto = new AdminDisplayDto();
+
+        dto.setId(admin.getId());
+        dto.setName(admin.getName());
+        dto.setUsername(admin.getUsername());
+        dto.setEmail(admin.getEmail());
+        dto.setRole(admin.getRole());
+
+        return dto;
     }
 }
