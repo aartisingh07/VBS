@@ -443,7 +443,19 @@
             min-width: 18px;
             text-align: center;
         }
-
+        .mission-text {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        .soft-divider {
+            width: 60%;
+            margin: 18px auto;
+            border: none;
+            height: 1px;
+            background: #eee;
+        }
     </style>
 </head>
 <body>
@@ -467,6 +479,10 @@
         <div class="dashboard-header">
             <h2 id="welcomeText">Welcome</h2>
             <p>User ID: <strong><span id="userId">-</span></strong></p>
+            <p class="mission-text">
+                VBS is designed to provide a secure, paperless, and real-time banking experience.
+            </p>
+            <hr class="soft-divider">
         </div>
 
         <div id="dashMessage" class="message"></div>

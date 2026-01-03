@@ -149,8 +149,13 @@
       align-items: center;
       justify-content: center;
     }
-
-
+    .balance-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      opacity: 0.95;
+    }
     .message{display:none;margin-bottom:20px}
     .message.show{display:block}
   </style>
@@ -172,9 +177,9 @@
   <div class="content">
 
     <div class="passbook-header">
-      <h2>Your Passbook</h2>
+      <h2>📒 Your Passbook</h2>
       <div class="balance-card">
-        <p>Current Balance</p>
+        <p class="balance-title">🪙 Current Balance</p>
         <div class="amount">₹<span id="currentBalance">0.00</span></div>
       </div>
     </div>
